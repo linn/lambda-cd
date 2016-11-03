@@ -1,0 +1,48 @@
+{
+  "Description": "Lambda Test",
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {},
+  "Resources": {
+    "LambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/"
+      }
+    },
+    "HelloLambda": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaExecutionRole",
+            "Arn"
+          ]
+        },
+        "Code": {
+          "S3Bucket": "linn.lambdas",
+          "S3Key": "helloworld.zip"
+        },
+        "Runtime": "nodejs",
+        "Timeout": "25"
+      }
+    }
+  },
+  "Outputs": {}
+}
