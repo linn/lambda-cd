@@ -14,7 +14,7 @@ test:
 clean:
 	-rm ${PACKAGE}
 
-${PACKAGE}: clean
+${PACKAGE}: clean test
 	grunt zip
 
 deploy: ${PACKAGE} | undeploy
