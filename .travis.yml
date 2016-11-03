@@ -1,5 +1,8 @@
 language: node_js
 node_js: 4
+sudo: required
+services:
+  - docker
 before_install: 
   - npm install -g grunt-cli
   - curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
