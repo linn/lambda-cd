@@ -11,8 +11,15 @@ clean:
 ${PACKAGE}: clean test
 	grunt zip
 
-deploy: ${PACKAGE} | undeploy
+upload: ${PACKAGE}
 	aws s3 cp ${PACKAGE} s3://linn.lambdas/lambda-cd.zip
+
+upgrade: upload
+	aws cloudformation update-stack --stack-name lambda-testing --capabilities=CAPABILITY_IAM --template-body file://./cloudformation/lambda.json
+	aws cloudformation wait stack-update-complete --stack-name lambda-testing
+
+
+deploy: upload | undeploy
 	aws cloudformation create-stack --stack-name lambda-testing --capabilities=CAPABILITY_IAM --template-body file://./cloudformation/lambda.json
 	aws cloudformation wait stack-create-complete --stack-name lambda-testing
 

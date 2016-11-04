@@ -3,6 +3,120 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Parameters": {},
   "Resources": {
+    "Api": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Body": {
+          "swagger": "2.0",
+          "info": {
+            "version": "0.0.0",
+            "title": "Lambda CD API"
+          },
+          "paths": {
+            "/": {
+              "post": {
+                "summary": "IsEven",
+                "description": "Return boolean if a number is even",
+                "parameters": [
+                  {
+                    "name": "values",
+                    "in": "body",
+                    "required": true,
+                    "description": "integers",
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                ],
+                "produces": [
+                  "application/json"
+                ],
+                "responses": {
+                  "200": {
+                    "description": "boolean if the number is even",
+                    "schema": {
+                      "type": "array",
+                      "items": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "400": {
+                    "description": "error condition",
+                    "schema": {
+                      "type": "object"
+                    }
+                  }
+                },
+                "x-amazon-apigateway-integration": {
+                  "uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:aws:apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "Lambda",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  },
+                  "responses": {
+                    "default": {
+                      "statusCode": "200",
+                      "responseTemplates" : {
+                          "application/json" : "#set ($root=$input.path('$')) $root"
+                      }
+                    },
+                    ".*Invalid input.*": {
+                      "statusCode": "400",
+                      "responseTemplates" : {
+                        "application/json" : "#set ($root=$input.path('$')) $root"
+                      }
+                    }
+                  },
+                  "httpMethod": "POST",
+                  "type": "aws"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ApiDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "Description": "Test API Gateway for a PoC Lambda",
+        "RestApiId": {
+          "Ref": "Api"
+        },
+        "StageName": "release"
+      }
+    },
+    "LambdaInvokePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Lambda",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com"
+      }
+    },
     "LambdaExecutionRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -21,13 +135,13 @@
               ]
             }
           ]
-        },
-        "Path": "/"
+        }
       }
     },
     "Lambda": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
+        "FunctionName": "lambda-functionname",
         "Handler": "index.handler",
         "Role": {
           "Fn::GetAtt": [
@@ -39,7 +153,7 @@
           "S3Bucket": "linn.lambdas",
           "S3Key": "lambda-cd.zip"
         },
-        "Runtime": "nodejs",
+        "Runtime": "nodejs4.3",
         "Timeout": "25"
       }
     }
