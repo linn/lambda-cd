@@ -25,7 +25,7 @@
         "Path": "/"
       }
     },
-    "HelloLambda": {
+    "Lambda": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Handler": "index.handler",
@@ -37,7 +37,7 @@
         },
         "Code": {
           "S3Bucket": "linn.lambdas",
-          "S3Key": "helloworld.zip"
+          "S3Key": "lambda-cd.zip"
         },
         "Runtime": "nodejs",
         "Timeout": "25"
