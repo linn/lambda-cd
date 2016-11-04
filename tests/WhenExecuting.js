@@ -20,6 +20,22 @@ describe('When invoked with data', () => {
         expect(result).to.be.eql([true, false, true, false, true, false]);
     });
 });
+describe('When invoked with a string', () => {
+    let error;
+    beforeEach((done) => {
+        let callback = (err, data) => {
+            error = err;
+            done();
+        };
+        sut.handler("banana", {}, callback);
+    });
+    it('Should return an error', () => {
+        expect(error).to.be.an('Error');
+    });
+    it('Should have an error object', () => {
+        expect(error).to.exist;
+    });
+});
 describe('When invoked with nothing', () => {
     let error;
     beforeEach((done) => {

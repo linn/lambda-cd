@@ -7,7 +7,7 @@ function isEven(n, callback) {
 }
 
 exports.handler = function (event, context, callback) {
-	if (!event || !event.length) {
+	if (!event || event.constructor !== Array) {
 		callback(new Error("Invalid input"));
 	} else {
 		async.map(event, isEven, function(err, result) {
