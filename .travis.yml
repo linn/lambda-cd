@@ -1,5 +1,5 @@
 language: node_js
-node_js: 4
+node_js: 4.3
 before_install: 
   - npm install -g grunt-cli
   - curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
