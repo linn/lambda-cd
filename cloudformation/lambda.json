@@ -74,14 +74,14 @@
                   "responses": {
                     "default": {
                       "statusCode": "200",
-                      "responseTemplates" : {
-                          "application/json" : "#set ($root=$input.path('$')) $root"
+                      "responseTemplates": {
+                        "application/json": "#set ($root=$input.path('$')) $root"
                       }
                     },
                     ".*Invalid input.*": {
                       "statusCode": "400",
-                      "responseTemplates" : {
-                        "application/json" : "#set ($root=$input.path('$')) $root"
+                      "responseTemplates": {
+                        "application/json": "#set ($root=$input.path('$')) $root"
                       }
                     }
                   },
@@ -102,6 +102,18 @@
           "Ref": "Api"
         },
         "StageName": "release"
+      }
+    },
+    "ApiToDomainMapping": {
+      "DependsOn": "ApiDeployment",
+      "Type": "AWS::ApiGateway::BasePathMapping",
+      "Properties": {
+        "BasePath": "lambda-cd",
+        "DomainName": "apigw.linn.co.uk",
+        "RestApiId": {
+          "Ref": "Api"
+        },
+        "Stage": "release"
       }
     },
     "LambdaInvokePermission": {
