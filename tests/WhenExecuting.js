@@ -17,7 +17,7 @@ describe('When invoked with data', () => {
         expect(result).to.be.an('array');
     });
     it('Should have correct results', () => {
-        expect(result).to.be.eql([true, false, true, false, true, false]);
+        expect(result).to.be.eql([false, true, false, true, false, true]);
     });
 });
 describe('When invoked with a string', () => {
